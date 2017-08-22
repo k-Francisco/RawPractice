@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask AssemblyFile="XamarinLive.Build.dll" TaskName="XamarinLive.Build.XamarinLiveTask" />
+  <UsingTask AssemblyFile="XamarinLive.Build.dll" TaskName="XamarinLive.Build.XamarinLiveRevertTask" />
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' and !$(DefineConstants.Contains('DISABLE_XAMARINFORMSLIVE')) ">
+    <CompileDependsOn>
+      $(CompileDependsOn);
+      XamarinLiveRevert;
+    </CompileDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="SaveXamlFiles">
+    <ItemGroup>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="RemoveXamlFiles" DependsOnTargets="SaveXamlFiles" >
+    <ItemGroup>
+      <OriginalXamlResource Include="@(EmbeddedResource)" Condition="'%(Extension)' == '.xaml' AND '$(DefaultLanguageSourceExtension)' == '.cs'" />
+      <EmbeddedResource Remove="@(EmbeddedResource)" Condition="'%(Extension)' == '.xaml' AND '$(DefaultLanguageSourceExtension)' == '.cs'" />
+    </ItemGroup>
+  </Target>
+  
+  <Target Name="XamarinLiveTask" AfterTargets="ResolveReferences" BeforeTargets="Compile" DependsOnTargets="RemoveXamlFiles" Condition=" '$(Configuration)' == 'Debug' and !$(DefineConstants.Contains('DISABLE_XAMARINFORMSLIVE')) ">
+    <Message Text="@(EmbeddedResource)"></Message>
+
+    <XamarinLiveTask Items="@(OriginalXamlResource)" IntermediateOutputPath="$(IntermediateOutputPath)" ProjectDir="$(ProjectDir)" DefineConstants="$(DefineConstants)">
+      <Output TaskParameter="GeneratedFiles" PropertyName="XLGeneratedFiles" />
+    </XamarinLiveTask>
+
+    <ItemGroup>
+      <EmbeddedResource Include="$(XLGeneratedFiles)">
+        <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        <SubType>Designer</SubType>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="XamarinFormsLiveRuntime">
+        <HintPath>$(MSBuildThisFileDirectory)XamarinFormsLiveRuntime.dll</HintPath>
+        <Private>True</Private>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="$(MSBuildThisFileDirectory)minified.cs" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="XamarinLiveRevert">
+    <ItemGroup>
+      <EmbeddedResource Remove="$(XLGeneratedFiles)" />
+      <EmbeddedResource Include="@(OriginalXamlResource)">
+        <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+        <SubType>Designer</SubType>
+        <WithCulture>false</WithCulture>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
+</Project>

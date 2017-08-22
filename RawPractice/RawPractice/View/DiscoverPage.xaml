@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:RawPractice.Controls;assembly:RawPractice"
+             xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
+             x:Class="RawPractice.View.DiscoverPage"
+             AutomationId="Discover"
+             BackgroundColor="White">
+    <ContentPage.Content>
+        <StackLayout>
+
+            <ListView
+                x:Name="Discovery"
+                ItemsSource="{Binding Discovery}"
+                HasUnevenRows="True"
+                SeparatorVisibility="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout
+                                Padding="0,16,0,-10">
+
+                                <controls:CustomLabel
+                                  TextColor="#2C3E50"
+                                  Text="{Binding categoryName}"
+                                  StyleId="BryantBoldAlt-Regular"
+                                  FontSize="Large"
+                                  Margin="16,0,0,0"/>
+
+                                <controls:TLScrollView x:Name="DiscoverList" ItemSource="{Binding bandList}"
+                                        Orientation="Horizontal" HeightRequest="140">
+                                        <controls:TLScrollView.ItemTemplate>
+                                            <DataTemplate>
+                                                <ViewCell>
+                                                    <StackLayout
+                                                        Orientation="Vertical"
+                                                        Margin="16,0,-10,0">
+                                                        <Frame
+                                                            Padding="0"
+                                                            Margin="0"
+                                                            CornerRadius="4"
+                                                            HasShadow="True">
+                                                            <Image Source="{Binding imgSource}" HeightRequest="100" WidthRequest="100"/>
+                                                        </Frame>
+                                                        <controls:CustomLabel Text="{Binding bandName}"
+                                                                              StyleId="BryantMediumAlt-Regular"
+                                                                              FontSize="14"
+                                                                              LineBreakMode="TailTruncation"
+                                                                              WidthRequest="80"
+                                                                              XAlign="Center"/>
+                                                    </StackLayout>
+                                                </ViewCell>
+                                            </DataTemplate>
+                                        </controls:TLScrollView.ItemTemplate>
+                                    </controls:TLScrollView>
+
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            
+            
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
